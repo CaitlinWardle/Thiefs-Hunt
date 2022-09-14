@@ -1,0 +1,390 @@
+#Assignment 10
+#Caitlin Wardle
+#Stuednt number 101219043
+
+import pygame
+inventory=[]
+#Create Castle's Adjacency List
+def location(players_location):
+
+	# these are the names of the "rooms" and their index in the names list
+	# indicates the corresponding row/column values in the represented graph
+	names = ["Dungeon", "Torture Chamber", "Weapons Room", "Closet", "Hounds","Outdoor Training Grounds","Wine Cellar","Servant Chambers","Stables","Kitchen","Storage Cupboard","Gardens","Herb Garden","Dinning Room","Library","Outdoor Riding Grounds","King's Hall","War Planning Room","Kings Private Riding Ground","Ball Room","Magistrates Office","Main Hall","Exit"]
+	graph = {0:[1,2,6],1:[0,3],2:[0,5,6],3:[1,4],4:[3,8],5:[2,11],6:[0,2,7,9],7:[6,8,10],8:[4,7,15],9:[6,10,12,13],10: [7,9],11:[5,12],12:[9,11],13:[9,11,14,16,19],14:[13,19],15:[8,18],16:[13,17],17:[16,18,20],18:[15,17],18:[15,17],19:[13,14,21,22],20:[17,22],21:[19],22:[19,20]}
+	directions={0:["EAST","WEST","NORTH"],1:["WEST","NORTHEAST"],2:["WEST","NORTHWEST","NORTHEAST"],3:["SOUTHWEST","NORTH"],4:["SOUTH","WEST"],5:["SOUTHEAST","NORTH"],6:["SOUTH","SOUTHWEST","EAST","NORTH"],7:["WEST","NORTHEAST","NORTHWEST"],8:["EAST","SOUTHWEST","NORTHEAST"],9:["SOUTH","EAST","NORTHWEST","NORTH"],10:["SOUTHEAST","WEST"],11:["SOUTH","SOUTHEAST"],12:["SOUTHEAST","NORTHWEST"],13:["SOUTH","SOUTHWEST","NORTHWEST","EAST","NORTH"],14:["SOUTHEAST","NORTHEAST"],15:["SOUTHWEST","NORTH"],16:["WEST","NORTHEAST"],17:["SOUTHWEST","EAST","NORTHEAST"],18:["SOUTH","NORTH"],19:["SOUTH","SOUTHWEST","NORTHWEST","NORTH"],20:["SOUTHWEST","NORTHWEST"],21:["SOUTHEAST"],22:["SOUTH","SOUTHEAST"]}
+
+	print()
+
+	curr_location = players_location
+	
+	print("You are currently in ", curr_location, ".", sep = '')
+	print()
+
+	exits = []
+	locations=[]
+	print("What room are you going to next? Looking at our map, heres our options\n")
+	index= names.index(curr_location)
+	count=0
+	for i in (graph[index]):
+		d=directions[index][count]
+		print (names[i]," is",d," of your location")
+		exits.append(d)
+		locations.append(names[i])
+		count+=1
+		print()
+	location_found=False
+	while location_found==False:
+		next_location = input("Type your next location, use the direction you wish to go\n\tDirection: ").upper()
+		ask_question=next_location.upper()
+		if ask_question=="QUIT":
+			quit()
+		elif ask_question=="HELP":
+			instructions()
+		elif ask_question=="INVENTORY":
+			print (inventory)
+			
+			
+		if (next_location not in exits):
+			print()
+			print("You cannot go this way, make sure your choice is spelt correctly and is in the provided list of available locations")
+			continue
+		else:
+			curr_location = locations[exits.index(next_location)]
+			clear()
+			location_found=True
+		print()
+	return (curr_location)
+		
+def clear():
+	print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+	
+def startMessage():
+	print ("\nWelcome to Theif's Hunts!\nYou are in a Castle with but 1 exit.\nScattered around the castle are ancient relics,treasure and more \nCollect as many valuebles as possible and escape\nBut beware each room holds its own dangers\nEscape or Die the choice is yours")
+	user=input ("Would You Like To Play? ").upper()
+	return (user)
+
+def gameboard():
+#set up your screen with image
+	image = pygame.image.load("Drawing .png")
+	width=image.get_width()
+	height=image.get_height()
+	new_image=pygame.transform.scale(image,(width//2,height//2))
+	new_width=new_image.get_width()
+	new_height=new_image.get_height()
+	screen=pygame.display.set_mode((new_width,new_height))
+	white=(255,255,255,255)
+	screen.fill(white) # add background colour to whole screen
+
+	#put the image on the screen
+	screen.blit(new_image,(0,0))
+
+					
+	# display new image
+	pygame.display.update()	
+	question= input ("Do you need to see the game instructions? ").upper()
+	if (question=="YES"):
+		instructions()
+		
+def instructions ():
+	print ("\nYou are to move from room to room, use the map provided as a clue\nSome rooms will present a promt to you, then you must preform an action from the folowing keywords\nTake or Continue\n\nTake will result in you picking up the provided item and adding it to your inventory\nContinue will see you move forward without this item\n\nThere are also some non action keywords you can use at any input promt...they are\nHelp, Quit, and Inventory\n\nHelp will take you back to these instuctions\nQuit will exit the game\nInventory will show you the items you have collected\n\nSome Rooms present hidden dangers, where you will be prompted to make a choice\nSimply follow the prompt given\n\nAgain your goal is to escape the castle with as many valuebles as possible\n\n")
+	user=input("Press any button when your ready to continue. ")
+
+def actions(item):
+	action_taken=False
+	while(action_taken==False):
+		user = input ("What action do you take? ").upper()
+		if (user=="TAKE"):
+			inventory.append(item)
+			print (inventory)
+			action_taken=True
+		elif (user=='CONTINUE'):
+			print ("Okay")
+			action_taken=True
+		elif (user=='QUIT'):
+			quit()
+			action_taken=True
+		elif (user=='HELP'):
+			instructions ()
+		elif (user=="INVENTORY"):
+			print (inventory)
+	
+def Room0():
+	if 'Gold Coin' not in inventory:
+		print ("\nYou open your eyes to find a damp and cold room, there is a gold coin on the floor") 
+		actions ("Gold Coin")
+	elif 'Gold Coin' in inventory:
+		print ("\nYou open your eyes to find a damp and cold room.")
+
+def Room1():
+	print("\nThe room is dark, racks of torture tools dangle from the wall menacingly.\nYou really shouldn't touch any of those...but if you want you can take one")
+	actions("Torture Tool")
+	
+	
+def Room2():
+	if 'Sword' not in inventory:
+		print ("\nThis room is well lit, weapons and shields hang along the top of the wall. A sword hasn't been put away and you can reach it.")
+		actions("Sword")
+	else:
+		print ("\nThis room is well lit, weapons and shields hang along the top of the wall.")
+
+def Room3():
+	print ("\nUgg this place smells...nothing of value here")
+
+def Room4():
+	if "Sword" in inventory:
+		print ("\nDogs bark and growl at you as you enter\nHowever when they see your sword they stop\n")
+		answer=False
+		while answer==False:
+			question= int (input("Press 1 if you order them to sit in your best knight voice\nPress 2 if you decide to fight them\n"))
+			if question==1:
+				print ("The dogs sit immediatly, they must think your a knight.")
+				answer=True
+			elif question==2:
+				print ("OMG, your a monster, those dogs rip you to shreds and you deserved it.")
+				answer=True
+				quit()
+			else:
+				print ("Thats not an answer... Make a choice")
+		
+	else:
+		print ("\nDogs bark and growl at you as you enter\nYour defenseless as they lunge\n\nThere's no escaping this one")
+		quit()
+def Room5():
+	if "Sword" in inventory:
+		print ("\nA bunch of soilders look at you funny but see your Sword")
+		answer=False
+		while answer==False:
+			question= int (input("Press 1 if you pretend to be a knight\nPress 2 if you decide to fight to fight them\nPress 3 if you pretend to be a servant delivering a sword to one of the knights"))
+			if question==1:
+				print ("\nThey dont belive you and your arrested")
+				answer=True
+				quit()
+			elif question==2:
+				print ("\nDude, your a thief not HeMan, your double dead.")
+				answer=True
+				quit()
+			elif question==3:
+				print ("\n'Well get on with it!' yells the knight as he goes back to training")
+				answer=True
+			else:
+				print ("\nThats not an answer... Make a choice")
+	else:
+		print ("\nThe soilders scowl at you and yell\n'Get OUT, Servant, we dont need you!'")
+	
+def Room6():
+	if 'Wine' not in inventory:
+		print ("\nRacks and racks of wine line shelves, expensive, fantastical wines. But you only have room to take one.")
+		actions("Wine")
+	else:
+		print ("\nRacks and racks of wine line shelves, expensive, fantastical wines.")
+	
+
+def Room7():
+	if "Service Uniform" not in inventory:
+		print ("\nServents rush back and forth,\nthey are too busy preparing for a feast to notice you.\nYou see a servants uniform on a bed\nMaybe you should put it on to blend in.")
+		actions("Service Uniform")
+	else:
+		print ("\nServents rush back and forth,\nthey are too busy preparing for a feast to notice you.")
+	
+def Room8():
+	print ("Man these horses are gorgous, but you cant exactly sneak around with one of them can you?")
+	
+def Room9():
+	print ("\nThis room smells great!!\nCooks are hard at work, this is going to be some party\nYou walk past an unguarded plate of sweetBuns.")
+	actions("Bun")
+	
+
+def Room10():
+	print ("\nJust preserves and lettace in here. That strawberry Jam does look good though")
+	actions("Strawberry Jam")
+	
+def Room11():
+	print ("Birds sing and you take in the fresh air\nLarge trees line an intricate stone pathway.")
+	
+def Room12():
+	print ("Parsly, Parsly everywhere")
+	actions("Parsly")
+	
+def Room13():
+	if "Service Uniform" in inventory:
+		if "Torture Tool" in inventory:
+			print ("The bloody Torture Tool in your pocket has left you with a patch of blood\nA guard notices and inspects you\nHe finds your loot and your thrown in the Dungeons")
+			quit()
+		else:
+			print ("\nPeople sit eating\nDressed in eligant clothes they pay you and your servers uniform no mind\nTheres nothing you can steal at the moment.")
+		
+	else:
+		print ("\nThe party stops as you walk in\nYou cant exactly blend into the crowd in your thiefs garb\nGuards!! Yells to king\nThere is no escape\nYour hanged the next day")
+		quit()
+		
+def Room14():
+	if 'Book' not in inventory:
+		print ("\nBooks, Books, Wonderful Books!!!\n They line the shelves back and forth but the jewel of the King's collection is right in front of you\nThe original copy of Shakespears Macbeth!")
+		actions("Book")
+	else:
+		print ("\nBooks, Books, Wonderful Books!!!\n They line the shelves back and forth")
+	
+def Room15():
+	if "Service Uniform" in inventory:
+		print ("\nA Knight taking his hourse back to the stables shoves his filthy riding gear into your hands")
+		answer=False
+		while answer==False:
+			question= int (input("Press 1 if you clean and put away the gear\nPress 2 if you throw it in a pile\n"))
+			if question==1:
+				print ("You clean the gear and slip by un-noticed")
+				answer=True
+			elif question==2:
+				print ("Just as you throw down the gear the knight returns\n'Hey. MY GEAR' screams the knight\nHe throws you in the cells")
+				answer=True
+				quit()
+			else:
+				print ("Thats not an answer... Make a choice")
+		
+	else:
+		print ("\n'What are you doing here' Yells a knight.\nYou have no defense\nYour taken to the cells for the night and loss all your loot")
+		quit()
+def Room16():
+	if 'Crown' not in inventory:
+		print ("\nThe room is empty\nEveryone is down at tonights festivities\nThis is why you came\nThe king wore his celebrations crown today...\nLeaving his real one ripe for the taking!!!!")
+		actions("Crown")
+	else:
+		print ("\nThe room is empty\nEveryone is down at tonights festivities")
+
+def Room17():
+	
+	print ("Huh, invaiding Genovia are we?")
+		
+def Room18():
+
+	print ("\nThe kings hourse, The most magnificant in all the land!\nDare I?")
+	actions("Horse")
+	
+	if "Horse" in inventory:
+		print ("You where caught immediatly\nHard to sneak around on the back of a seven foot horse\nReally this ones on you")
+		quit()
+	
+def Room19():
+	
+	if "Service Uniform" in inventory:
+		print ("\nPeople dance, eligant dresses sway. The parties in full force and no one stops to look at you\nThis servants uniform really paid off\nYou see a lovely Ruby Necklace")
+		answer=False
+		while answer==False:
+			question= int (input("Press 1 if you charm it away from her\nPress 2 if you pickpocket it\n"))
+			if question==1:
+				print ("She's not impressed and screams at you.\nFor insulting a noble your thrown in jail and lose your loot.")
+				answer=True
+				quit()
+			elif question==2:
+				print ("The perfect chance presents itself...")
+				actions("Ruby Necklace")
+				answer=True
+			else:
+				print ("Thats not an answer... Make a choice")
+
+	else:
+		print ("\nThe party stops as you walk in\nYou cant exactly blend into the crowd in your thiefs garb\nGuards!! Yells to king\nThere is no escape\nYour hanged the next day")
+		quit()
+def Room20():
+	
+	print ("Paper work is so boring")
+		
+def Room21():
+	
+	if 'Painting' not in inventory:
+		print ("\nThe room is empty\nEveryone is down at tonights festivities\nThere is a rather fetching painting of a mongoose on the wall...")
+		actions("Painting")
+	else:
+		print ("\nThe room is empty\nEveryone is down at tonights festivities")
+	
+def Room22():
+	
+	print ("You've escaped, congrats!!\n And with,",inventory,"Great job!")
+	quit()
+def playing():
+	play=True
+	while (play==True):
+		user=startMessage()
+		if (user=='YES'):
+			players_location="Dungeon"
+			gameboard()
+			escape=False
+			while (escape==False):
+				
+				if players_location=="Dungeon":
+					Room0()
+					players_location=(location("Dungeon"))
+				elif players_location=="Torture Chamber":
+					Room1()
+					players_location=(location("Torture Chamber"))	
+				elif players_location=="Weapons Room":
+					Room2()
+					players_location=(location("Weapons Room"))
+				elif  players_location=="Closet":
+					Room3()
+					players_location=(location("Closet"))
+				elif  players_location=="Hounds":
+					Room4()
+					players_location=(location("Hounds"))
+				elif  players_location=="Outdoor Training Grounds":
+					Room5()
+					players_location=(location("Outdoor Training Grounds"))
+				elif  players_location=="Wine Cellar":
+					Room6()
+					players_location=(location("Wine Cellar"))
+				elif  players_location=="Servant Chambers":
+					Room7()
+					players_location=(location("Servant Chambers"))
+				elif players_location=="Stables":
+					Room8()
+					players_location=(location("Stables"))
+				elif players_location=="Kitchen":
+					Room9()
+					players_location=(location("Kitchen"))
+				elif players_location=="Storage Cupboard":
+					Room10()
+					players_location=(location("Storage Cupboard"))
+				elif players_location=="Gardens":
+					Room11()
+					players_location=(location("Gardens"))
+				elif players_location=="Herb Garden":
+					Room12()
+					players_location=(location("Herb Garden"))
+				elif players_location=="Dinning Room":
+					Room13()
+					players_location=(location("Dinning Room"))
+				elif players_location=="Library":
+					Room14()
+					players_location=(location("Library"))
+				elif players_location=="Outdoor Riding Grounds":
+					Room15()
+					players_location=(location("Outdoor Riding Grounds"))
+				elif players_location=="King's Hall":
+					Room16()
+					players_location=(location("King's Hall"))
+				elif players_location=="War Planning Room":
+					Room17()
+					players_location=(location("War Planning Room"))
+				elif players_location=="Kings Private Riding Ground":
+					Room18()
+					players_location=(location("Kings Private Riding Ground"))
+				elif players_location=="Ball Room":
+					Room19()
+					players_location=(location("Ball Room"))
+				elif players_location=="Magistrates Office":
+					Room20()
+					players_location=(location("Magistrates Office"))
+				elif players_location=="Main Hall":
+					Room21()
+					players_location=(location("Main Hall"))
+				elif players_location=="Exit":
+					Room22()
+			while (play==True):
+				
+				for event in pygame.event.get():
+					if event.type==pygame.QUIT:
+						play=False # only stop desplaying the image if the user quits the program
+		else:
+			print ("Where sorry to here that, your loss")
+			play=False
+			
+playing()
